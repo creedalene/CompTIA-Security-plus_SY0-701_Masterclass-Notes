@@ -1,5 +1,7 @@
 # CompTIA Security+ (SY0-701) Domain 1.2 Summarize fundamental security concepts.
 
+Domain 1.2 of CompTIA Security+ SY0-701 establishes the foundational concepts that underpin every security decision. The section moves from the core objectives of information security through identity and access mechanisms, risk-oriented analysis techniques, modern architectural models, physical protections, and deliberate deception methods. Together these topics equip candidates to evaluate controls, design access systems, identify deficiencies, and apply both traditional and contemporary defensive approaches.
+
 ## Confidentiality, Integrity, and Availability (CIA)
 
 The CIA triad defines the three core security objectives that every control aims to protect. Organizations design security programs to preserve confidentiality, integrity, and availability of information and systems.
@@ -271,36 +273,88 @@ The data plane remains distinct from the control plane. It focuses solely on enf
 
 ## Physical security
 
-### Bollards
+Physical security protects facilities, equipment, and personnel from unauthorized physical access, damage, and environmental threats. Organizations deploy layered tangible controls at the perimeter, building entrances, internal zones, and individual assets.
 
-### Access control vestibule
+### Perimeter and Entry Controls
+- **Bollards** — Short, sturdy posts set in the ground block vehicle ramming attacks while still allowing pedestrian movement. Organizations place them in front of entrances, glass facades, and critical infrastructure.
+- **Fencing** — Physical barriers define property boundaries and deter casual intrusion. Height, material strength, and toppings such as barbed or razor wire increase resistance to climbing. Clear zones on both sides of the fence improve visibility and surveillance effectiveness.
+- **Access control vestibule** (mantrap) — Two interlocking doors create a small enclosed space. Only one door unlocks at a time, forcing sequential authentication and preventing tailgating or piggybacking.
+- **Access badge** — Credential that a reader validates before unlocking a door or turnstile. Badges combine with personal identification numbers or biometrics for stronger authentication. Lost or stolen badges require immediate revocation.
+- **Lighting** — Illumination of exteriors, entrances, parking areas, and critical zones removes shadows that conceal activity. Proper lighting improves the effectiveness of cameras and deters unauthorized approach.
 
-### Fencing
+### Surveillance and Detection
+- **Video surveillance** — Cameras record activity in real time or store footage for later review. Visible cameras deter intruders; continuous monitoring or analytics detect suspicious behavior. Organizations protect camera feeds and storage from tampering.
+- **Security guard** — Trained personnel provide human presence, verify credentials, patrol areas, respond to alarms, and escort visitors. Guards combine deterrent, detective, and corrective functions.
+- **Sensors** detect physical intrusion or environmental changes and trigger alarms or camera recording:
+  - **Infrared** sensors detect body heat or motion through temperature differences.
+  - **Pressure** sensors register weight or force on floors, mats, or surfaces.
+  - **Microwave** sensors emit radio waves and detect disturbances in the reflected signal.
+  - **Ultrasonic** sensors use high-frequency sound waves to identify movement inside a protected space.
 
-### Video surveillance
+### Implementation Principles
+Organizations place controls in concentric layers: perimeter barriers first, then building entry points, then internal secure zones, then asset-level protections such as locked racks and device locks. Integration with identity systems links badge readers to access rights, while camera and sensor outputs feed monitoring platforms.
 
-### Security guard
-
-### Access badge
-
-### Lighting
-
-### Sensors
-
-**Infrared**
-
-**Pressure**
-
-**Microwave**
-
-**Ultrasonic**
+Physical controls require regular inspection, testing, and maintenance. Damaged fences, non-functional cameras, expired badges, or misaligned sensors create exploitable gaps. Effective physical security denies attackers the direct access needed to bypass or compromise logical and operational defenses.
 
 ## Deception and disruption technology
 
+CompTIA Security+ SY0-701 groups four related deception techniques under this heading. All four plant attractive but false resources so that any interaction signals unauthorized activity.
+
+A honeypot is a single decoy system that emulates a valuable target.
+A honeynet expands the concept into an entire network of interconnected honeypots, allowing observation of lateral movement and multi-system attacker behavior.
+A honeyfile is a decoy file placed on real systems; any access to it raises an alert.
+A honeytoken is a decoy credential or data element (fake account, API key, token) whose use reveals compromise or theft.
+Together these techniques provide early detection, attacker diversion, and threat intelligence while remaining isolated from production assets. They complement preventive and detective controls by turning attacker curiosity into high-fidelity alerts.
+
 ### Honeypot
+
+A honeypot is a decoy system or resource deliberately designed to attract attackers. Organizations deploy honeypots to detect, deflect, and study unauthorized activity without exposing production assets.
+
+The honeypot appears valuable and vulnerable. It may emulate a server, workstation, database, or network service. Attackers who discover and interact with it generate alerts and leave forensic evidence. Because legitimate users have no reason to access the honeypot, any connection or activity is treated as suspicious by default.
+
+Honeypots serve three primary purposes:
+- **Detection** — Early warning of reconnaissance or intrusion attempts.
+- **Deflection** — Diversion of attacker attention and resources away from real systems.
+- **Intelligence** — Capture of attacker tools, techniques, and procedures for later analysis.
+
+Two common deployment styles exist. Low-interaction honeypots emulate only limited services and capture basic connection attempts. High-interaction honeypots run real operating systems and applications, allowing deeper engagement and richer intelligence at greater risk of compromise.
+
+Organizations isolate honeypots from production networks so that a compromised honeypot cannot become a pivot point. Monitoring systems record all traffic, keystrokes, and file changes. Security teams analyze the collected data to improve detection rules and understanding of current threats.
+
+A honeypot itself does not stop attacks on real systems. It provides visibility and deception that complement preventive and detective controls. When properly isolated and monitored, a honeypot converts attacker activity into actionable security intelligence.
 
 ### Honeynet
 
+A honeynet is a network of interconnected honeypots designed to attract, detect, and analyze attacker activity at scale. Organizations deploy honeynets to observe how adversaries move laterally, escalate privileges, and interact with multiple systems inside a controlled environment.
+
+Unlike a single honeypot, a honeynet presents an entire simulated network segment. It typically includes decoy servers, workstations, network devices, and services that appear realistic and valuable. Attackers who enter the honeynet generate traffic patterns, exploit attempts, and tool usage that security teams capture for intelligence.
+
+Honeynets operate under strict isolation. Gateway systems or containment mechanisms prevent compromised honeypots from reaching production networks. All traffic entering or leaving the honeynet passes through monitoring points that record packets, payloads, and attacker behavior. Researchers and defenders analyze the collected data to understand emerging tactics, techniques, and procedures.
+
+Organizations use honeynets for early detection of sophisticated threats, validation of detection rules, and collection of malware samples. The larger attack surface and realistic topology increase the chance of engaging advanced adversaries who ignore simple, isolated honeypots.
+
+A honeynet requires careful design, continuous monitoring, and strong containment. When properly implemented, it converts attacker operations into detailed forensic evidence and threat intelligence without exposing real assets.
+
 ### Honeyfile
 
+A honeyfile is a decoy file deliberately placed on a system or share to detect unauthorized access or data theft. The file appears legitimate and valuable yet serves no business purpose. Any attempt to open, copy, modify, or delete it generates an alert.
+
+Organizations name and locate honeyfiles to attract attention—examples include files labeled “payroll,” “credentials,” “strategic_plan,” or “customer_database_export.” The files may contain fake data or embedded beacons that report access attempts back to a monitoring system.
+
+Because legitimate users have no reason to interact with the honeyfile, any access is treated as suspicious by default. Detection can occur through file-integrity monitoring, access-control logging, or beacon callbacks. Security teams investigate the source of the access to determine whether an insider, compromised account, or external attacker is present.
+
+Honeyfiles provide low-cost, high-signal detection of data-centric threats. They complement larger deception techniques such as honeypots and honeynets by focusing specifically on unauthorized file access and potential data exfiltration.
+
 ### Honeytoken
+
+A honeytoken is a decoy digital credential or data element planted to detect unauthorized use. Common forms include fake user accounts, API keys, database entries, documents, email addresses, or authentication tokens that serve no legitimate purpose.
+
+Any attempt to use the honeytoken triggers an alert. Because real users and systems never need the token, its appearance in authentication logs, network traffic, or data repositories signals compromise or malicious activity. Security teams monitor for the token’s use and investigate the source.
+
+Organizations place honeytokens in locations attackers commonly target—password files, configuration repositories, cloud storage, or memory dumps. Some honeytokens embed beacons that report back when accessed; others rely solely on log detection.
+
+Honeytokens provide lightweight, high-fidelity detection of credential theft, lateral movement, and data exfiltration. They complement honeypots, honeynets, and honeyfiles by focusing specifically on the misuse of stolen or fabricated secrets.
+
+## Conclusion
+
+Mastery of these fundamental concepts enables precise classification of security requirements, accurate design of identity and access systems, structured identification of deficiencies, and effective application of both perimeter-independent architectures and deception techniques. Candidates who internalize the relationships among confidentiality, integrity, availability, non-repudiation, AAA, gap analysis, Zero Trust, physical controls, and deception technologies gain the conceptual foundation required for every subsequent domain of the SY0-701 exam and for practical security work.
