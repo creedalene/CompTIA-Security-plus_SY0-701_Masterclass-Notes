@@ -1,5 +1,7 @@
 # CompTIA Security+ (SY0-701) Domain 1.4 Explain the importance of using appropriate cryptographic solutions.
 
+Domain 1.4 of CompTIA Security+ SY0-701 covers the cryptographic solutions that protect confidentiality, integrity, authenticity, and non-repudiation. The domain spans public-key infrastructure, encryption methods and levels, hardware and software key-protection tools, obfuscation techniques, hashing and related password protections, digital signatures, distributed ledgers, and the operational elements of digital certificates. Mastery of these topics enables candidates to select, implement, and evaluate appropriate cryptographic controls across diverse environments.
+
 ## Public key infrastructure (PKI)
 
 Public key infrastructure provides the framework that binds public keys to verified identities and enables their trustworthy use at scale. PKI relies on asymmetric key pairs, digital certificates, and trusted authorities to support confidential communication, authentication, and non-repudiation across large environments.
@@ -204,6 +206,8 @@ Because the enclave’s security rests on hardware isolation rather than operati
 
 ## Obfuscation
 
+Obfuscation techniques protect sensitive data by concealing its presence or replacing it with non-sensitive substitutes. Steganography hides data inside ordinary carrier files so that the existence of the secret remains undetected. Tokenization substitutes irreversible tokens for original values and stores the real data in a protected vault. Data masking replaces sensitive content with realistic but fictitious values for use in non-production environments. These methods reduce exposure, limit compliance scope, and complement encryption by minimizing the sensitive data that systems and users actually handle.
+
 ### Steganography
 
 Steganography hides the existence of a message or file inside another, seemingly innocuous carrier so that observers do not realize secret communication is occurring. Unlike encryption, which makes content unreadable but visible as ciphertext, steganography conceals the fact that hidden data is present at all.
@@ -216,36 +220,184 @@ Organizations encounter steganography both as a defensive obfuscation method and
 
 ### Tokenization
 
+Tokenization replaces sensitive data elements with non-sensitive substitute values called tokens. The original data is stored in a secure, isolated repository; systems receive and process only the token.
+
+A tokenization system generates a token that has no mathematical relationship to the original value or that is produced by a one-way, irreversible process. Applications store and transmit the token in place of the real data. When the original value is required, an authorized process presents the token to the tokenization service and receives the sensitive data under strict access controls and auditing.
+
+Tokenization is widely applied to payment-card numbers, Social Security numbers, account identifiers, and other regulated data. Because most processing systems never see the original values, the scope of compliance requirements such as PCI DSS is reduced. A breach of a token-using application yields only tokens that cannot be reversed without access to the protected token vault.
+
+Tokenization differs from encryption. Encrypted data can be decrypted with the correct key; a well-designed token cannot be reversed without the tokenization system itself. Format-preserving tokens retain the length and structure of the original data so that existing applications and databases require minimal modification.
+
+Organizations implement tokenization to minimize the exposure of sensitive data, shrink compliance scope, and limit the impact of application-level breaches while still enabling necessary business processing.
+
 ### Data masking
+
+Data masking replaces sensitive values with realistic but fictitious substitutes so that non-production environments or unauthorized viewers never receive the original data. The masked data retains the format and statistical characteristics needed for development, testing, or analytics while removing actual sensitive content.
+
+Common techniques include:
+- Substitution of real values with fabricated but plausible values
+- Shuffling of values within a column
+- Redaction or nulling of selected fields
+- Encryption-style transformation that remains irreversible in the masked environment
+
+Static data masking produces a permanent sanitized copy of a database for use in development or test systems. Dynamic data masking leaves the original data intact in the production repository and applies masking rules in real time according to the identity and privileges of the requesting user.
+
+Organizations apply data masking to protect personal information, payment data, and proprietary records when production data must be used outside the highest-security environments. Because the masked values have no recoverable link to the originals, exposure of a masked data set does not disclose the true sensitive information.
+
+Effective masking preserves referential integrity and application functionality so that systems continue to operate correctly while eliminating unnecessary risk of data exposure.
 
 ## Hashing
 
+Hashing converts an arbitrary-length input into a fixed-length string of bits called a digest or hash value. The process is one-way: computing the digest from the input is straightforward, yet recovering the original input from the digest is computationally infeasible.
+
+A cryptographic hash function produces a unique digest for each distinct input with extremely high probability. Any change to the input—even a single bit—produces a completely different digest. This sensitivity enables integrity verification: a system computes the hash of data at one point in time and later recomputes it; matching digests confirm that the data remains unaltered.
+
+Common secure hash algorithms include SHA-256 and SHA-3. Older algorithms such as MD5 and SHA-1 are collision-resistant no longer and must not be used for security purposes. Hash functions are deterministic and do not use keys; the same input always yields the same digest.
+
+Hashing supports multiple security functions:
+- File and message integrity verification
+- Password storage (combined with salting and key-stretching)
+- Digital signature generation (the signature is applied to the hash rather than the full message)
+- Blockchain and change-detection mechanisms
+
+Because hashing is irreversible, it does not provide confidentiality. When confidentiality is required, encryption must be used instead of or in addition to hashing. Organizations rely on hashing whenever they need reliable, efficient proof that data has not been modified.
+
 ## Salting
+
+Salting adds a unique, random value to a password (or other secret) before the system computes its hash. The salt is stored alongside the resulting hash so that the same password can be verified later.
+
+Without a salt, identical passwords always produce identical hash values. An attacker can pre-compute hashes of common passwords (a rainbow table) and compare them against an entire stolen password file in a single pass. A unique salt for every password forces the attacker to recompute hashes for each individual entry, rendering pre-computed tables useless and dramatically increasing the cost of an offline attack.
+
+The salt itself is not secret; it must be available at verification time. Security comes from its uniqueness and randomness. Systems generate a new cryptographically random salt for every password and store the pair (salt, hash). During authentication the system retrieves the salt, concatenates or otherwise combines it with the supplied password, hashes the result, and compares the digest to the stored value.
+
+Salting is a mandatory companion to password hashing. Combined with a slow, memory-hard hashing algorithm (such as bcrypt, scrypt, or Argon2), it provides the primary defense against offline password-cracking attempts after a database breach.
 
 ## Digital signatures
 
+A digital signature is a cryptographic value that binds a message or document to a specific private key, providing integrity, authentication of origin, and non-repudiation.
+
+The signer computes a hash of the message and encrypts (or otherwise transforms) that hash with the signer’s private key. The resulting signature is transmitted with the message. Any recipient who possesses the corresponding public key can reverse the transformation and compare the recovered hash with a freshly computed hash of the received message. Matching hashes confirm that the message has not been altered and that the private-key holder produced the signature.
+
+Digital signatures rely on asymmetric cryptography and a trustworthy binding of public keys to identities, normally supplied by digital certificates. Because only the private-key holder can create a valid signature, the signer cannot later deny having signed the message (non-repudiation), provided the private key remains under the signer’s exclusive control.
+
+Common algorithms include RSA signatures, ECDSA, and EdDSA. Digital signatures protect software updates, email (S/MIME), documents, code, certificates, and any data whose origin and integrity must be verifiable. They form a foundational mechanism for authentication, integrity, and accountability across secure communications and public-key infrastructures.
+
 ## Key stretching
+
+Key stretching deliberately slows the computation of a derived key or password hash so that brute-force and dictionary attacks become far more expensive. The technique repeatedly applies a cryptographic function or uses memory-hard algorithms to increase the time and resources required for each guess.
+
+When a user supplies a password, the system feeds the password and a unique salt into a stretching function such as PBKDF2, bcrypt, scrypt, or Argon2. These functions iterate thousands or millions of times or consume substantial memory, producing a final derived key or hash that is stored for later verification. An attacker who obtains the stored value must perform the same expensive computation for every candidate password, making large-scale offline cracking impractical.
+
+Key stretching is applied primarily to password-based key derivation and password storage. It does not replace salting; the two mechanisms work together. The salt ensures uniqueness; stretching multiplies the cost of each verification attempt.
+
+Organizations configure iteration counts or memory parameters high enough to impose significant delay on attackers while remaining acceptable for legitimate authentication latency. As hardware improves, the work factor is increased to maintain the same relative security margin. Properly implemented key stretching converts weak or moderate human-chosen passwords into values that resist practical offline attack.
 
 ## Blockchain
 
+A blockchain is a distributed, append-only ledger that records transactions in linked, cryptographically protected blocks. Each block contains a cryptographic hash of the previous block, a timestamp, and transaction data. Altering any historical record changes its hash and breaks the chain of subsequent blocks, making tampering evident.
+
+Nodes in the network maintain identical copies of the ledger and reach agreement through a consensus mechanism before accepting new blocks. Because no single party controls the ledger and every participant can verify the entire history, blockchain provides integrity and transparency without a central trusted authority.
+
+Hashing supplies the linkage and integrity protection. Digital signatures authenticate the parties that submit transactions. Once a block is confirmed and additional blocks are added after it, reversing or modifying earlier entries becomes computationally impractical.
+
+Security applications of blockchain include secure logging, supply-chain provenance, certificate transparency, and decentralized identity systems. Organizations evaluate blockchain when they require a shared, immutable record among multiple parties that do not fully trust one another. The technology itself does not encrypt the data it stores; confidentiality must be provided by other means when needed.
+
 ## Open public ledger
+
+An open public ledger is a blockchain or distributed ledger that any participant can read and, under the rules of the system, submit transactions to. The entire history of entries remains visible to all parties, and no central authority controls membership or access to the data.
+
+Transparency is the defining characteristic. Every transaction and its associated cryptographic proofs can be independently verified by any observer. Consensus mechanisms ensure that only valid transactions are appended and that all honest participants converge on the same sequence of blocks.
+
+Because the ledger is public and append-only, integrity is protected by the same hash-linked structure used in blockchain systems. Alteration of historical records is detectable and computationally impractical once subsequent blocks have been added. Confidentiality is not provided; sensitive data must be kept off-chain or encrypted before submission if privacy is required.
+
+Open public ledgers support use cases that benefit from shared visibility and mutual distrust among participants, such as cryptocurrency networks, public certificate-transparency logs, and certain supply-chain or provenance systems. Organizations adopt them when the value of universal verifiability outweighs the loss of data privacy inherent in full public visibility.
 
 ## Certificates
 
+Digital certificates bind public keys to verified identities and enable scalable trust across systems. Certificate authorities issue and sign certificates; revocation mechanisms (CRLs and OCSP) communicate when certificates are no longer valid. Certificates may be self-signed or issued by third parties, each with different trust implications. Roots of trust anchor the entire hierarchy. Certificate signing requests initiate issuance, and wildcard certificates extend a single credential across multiple subdomains. Together these elements form the operational foundation of public-key infrastructure.
+
 ### Certificate authorities
+
+A certificate authority (CA) is a trusted entity that issues digital certificates binding public keys to identities. The CA verifies the identity of a subject, then signs a certificate containing the subject’s public key, identity information, validity period, and other attributes.
+
+Relying parties trust certificates issued by a CA because they trust the CA’s root certificate, which is pre-installed in operating systems, browsers, and other trust stores. Intermediate CAs may operate under a root CA, forming a chain of trust. A certificate is validated by verifying the signatures up the chain until a trusted root is reached and by checking revocation status.
+
+CAs follow documented registration and issuance practices. For public certificates, validation methods range from domain control checks to rigorous organizational identity verification. Private or enterprise CAs issue certificates for internal use and operate under organizational policy rather than public trust.
+
+Compromise of a CA’s private key allows an attacker to issue fraudulent certificates that appear legitimate. Organizations therefore protect CA keys in hardware security modules, apply strict operational controls, and maintain the ability to revoke certificates rapidly. Certificate authorities form the trust anchor of public-key infrastructure and enable scalable authentication, encryption, and digital signatures across large environments.
 
 ### Certificate revocation lists (CRLs)
 
+A certificate revocation list is a time-stamped, digitally signed inventory of certificates that a certificate authority has revoked before their scheduled expiration dates. Relying parties download and consult the CRL to determine whether a certificate presented to them remains valid.
+
+The CA publishes the CRL at a well-known distribution point, typically listed inside each issued certificate. The list contains the serial numbers of revoked certificates and the revocation date. Because the CRL is signed by the CA, recipients can verify its authenticity and integrity. Clients cache CRLs for a defined period to reduce network traffic, then refresh them according to the next-update field.
+
+Revocation occurs when a private key is compromised, an identity changes, or policy is violated. Until a certificate appears on a CRL (or is marked revoked by another mechanism), systems continue to treat it as valid. Latency between revocation decision and CRL publication creates a window of exposure; shorter publication intervals reduce that window.
+
+CRLs scale poorly for very large environments because the list grows with every revocation and must be periodically redistributed. Many deployments therefore supplement or replace pure CRL checking with the Online Certificate Status Protocol (OCSP), which supplies real-time status for individual certificates. Nevertheless, CRLs remain a fundamental, standards-based method for distributing revocation information across public-key infrastructures.
+
 ### Online Certificate Status Protocol (OCSP)
+
+The Online Certificate Status Protocol provides real-time verification of a digital certificate’s revocation status. A client queries an OCSP responder with the serial number of the certificate in question; the responder returns a signed reply indicating whether the certificate is good, revoked, or unknown.
+
+OCSP eliminates the need to download and parse entire certificate revocation lists. The client obtains a current, authoritative answer for the specific certificate it is validating, reducing latency and bandwidth compared with periodic CRL retrieval. The responder’s reply is digitally signed so the client can confirm authenticity and integrity of the status information.
+
+OCSP stapling improves privacy and performance. The certificate-presenting server periodically obtains an OCSP response for its own certificate and includes (“staples”) that response in the TLS handshake. Clients therefore receive revocation status without contacting the CA’s responder directly, preserving client privacy and reducing load on the responder infrastructure.
+
+Reliable OCSP operation requires highly available responders and short validity intervals on responses so that revocation information remains fresh. When OCSP checking is enforced and responders are reachable, systems can reject certificates promptly after revocation, closing the exposure window that exists with infrequently updated CRLs.
 
 ### Self-signed
 
+A self-signed certificate is a digital certificate signed by the same entity whose identity it certifies. The issuer and the subject are identical; no external certificate authority validates or attests to the binding between the public key and the claimed identity.
+
+Self-signed certificates are generated and signed with the subject’s own private key. They provide cryptographic functionality—encryption, authentication of the key holder, and integrity protection—but they supply no independent third-party assurance of identity. Relying parties must explicitly trust the certificate through manual installation into a trust store or by accepting a one-time security exception.
+
+Organizations commonly use self-signed certificates in laboratory environments, internal testing, and closed systems where a formal public-key infrastructure is unnecessary or unavailable. They also appear as the root certificates of private certificate authorities; in that case the self-signed root is deliberately distributed to all trusting parties as the trust anchor.
+
+Because anyone can create a self-signed certificate claiming any identity, browsers and operating systems display warnings when they encounter one that is not already trusted. Production public-facing services therefore rely on certificates issued by recognized certificate authorities rather than self-signed certificates. When self-signed certificates are used, secure distribution and careful management of the associated trust anchors remain essential to prevent man-in-the-middle substitution.
+
 ### Third-party
+
+A third-party certificate is a digital certificate issued by an external certificate authority that is independent of the organization relying on the certificate. The CA verifies the subject’s identity according to its published policies, then signs the certificate with its own private key.
+
+Because operating systems, browsers, and devices already contain the root certificates of recognized public CAs, third-party certificates are trusted automatically by most clients without additional configuration. This universal trust makes third-party certificates the standard choice for public-facing websites, public APIs, and any service that must be validated by arbitrary external parties.
+
+Organizations purchase or obtain third-party certificates through commercial CAs or free public CAs. The issuance process includes identity or domain validation whose rigor varies by certificate type (domain validation, organization validation, or extended validation). After issuance, the organization installs the certificate and its private key on the appropriate servers and monitors the certificate’s validity period and revocation status.
+
+Third-party certificates shift the burden of identity proof and global trust distribution to the external CA. They eliminate the need for the organization to distribute its own root certificate to every potential client, at the cost of dependence on the CA’s security practices, availability, and pricing. For services that must be trusted by the general public, third-party certificates remain the practical and expected solution.
 
 ### Root of trust
 
+A root of trust is a foundational component whose integrity is assumed rather than verified by other elements of the system. All subsequent security decisions and trust relationships derive from this root.
+
+In public-key infrastructure the root of trust is the self-signed root certificate of a certificate authority. Operating systems and applications embed these root certificates in their trust stores. Any certificate that chains to a trusted root inherits that trust. Compromise of a root private key undermines every certificate issued under it.
+
+In hardware the root of trust is typically a Trusted Platform Module, secure enclave, or immutable boot ROM that measures and attests to the integrity of later software stages. Because the hardware root cannot be altered by ordinary software, it supplies a reliable starting point for measured boot and remote attestation.
+
+Organizations protect roots of trust with the highest level of physical, procedural, and cryptographic controls. Access to root keys is limited, operations occur under dual control, and hardware security modules or equivalent protections isolate the material. When a root is compromised, every dependent key, certificate, or measurement becomes suspect and must be replaced.
+
+A system can have only a small number of roots of trust; expanding the set of trusted roots expands the attack surface. Careful selection, protection, and monitoring of roots of trust therefore determine the ultimate security of the entire trust hierarchy.
+
 ### Certificate signing request (CSR) generation
+
+A certificate signing request is a digitally signed message that an applicant sends to a certificate authority to obtain a digital certificate. The CSR contains the public key that will appear in the certificate, identity information about the subject, and a signature proving possession of the corresponding private key.
+
+The applicant first generates a public/private key pair. The private key remains securely stored and is never transmitted. The public key, together with requested subject attributes (common name, organization, locality, and optional subject-alternative names), is packaged into the CSR. The applicant signs the CSR with the private key so the CA can verify that the requester controls the key pair.
+
+The completed CSR is submitted to the CA through a web portal, email, or automated protocol. The CA validates the identity claims according to its policies, then issues a certificate that binds the supplied public key to the verified identity and signs the certificate with the CA’s own private key.
+
+Secure CSR generation requires that the private key be created in a protected environment (hardware security module, secure enclave, or properly access-controlled software store) and that the CSR itself be protected from tampering during submission. Organizations treat private-key generation and CSR creation as controlled steps in the certificate lifecycle so that the resulting certificate accurately represents a key pair that remains under the applicant’s sole control.
 
 ### Wildcard
 
+A wildcard certificate is a digital certificate that secures a base domain and all of its first-level subdomains with a single certificate. The common name or subject-alternative name contains an asterisk followed by the domain (for example, *.example.com). The certificate is therefore valid for www.example.com, mail.example.com, api.example.com, and any other hostname that matches the pattern.
+
+Wildcard certificates simplify administration when an organization operates many subdomains under one domain. Only one certificate and private key need to be managed, renewed, and installed. The same private key, however, is shared across every covered subdomain; compromise of that key affects all of them.
+
+Most public certificate authorities issue wildcards only for a single level of subdomain. A certificate for *.example.com does not cover deeper names such as a.b.example.com or the apex domain example.com itself unless those names are explicitly included.
+
+Organizations weigh convenience against risk. Wildcard certificates reduce operational overhead yet expand the blast radius of a private-key compromise and may complicate least-privilege key management. When subdomains have different security requirements or are managed by separate teams, individual certificates often provide better isolation than a single wildcard.
+
 ## Conclusion
+
+Cryptographic solutions form a layered system of protection. Public-key infrastructure and certificates establish scalable trust. Encryption, hashing, and digital signatures safeguard data at rest and in transit. Hardware roots of trust and key-management systems protect the keys themselves. Obfuscation techniques further limit exposure of sensitive values. Blockchain and open ledgers supply shared, tamper-evident records. Together these mechanisms allow organizations to achieve confidentiality, integrity, authenticity, and non-repudiation while managing the practical constraints of performance, recovery, and operational complexity.
