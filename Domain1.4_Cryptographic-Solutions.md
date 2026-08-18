@@ -390,11 +390,11 @@ Secure CSR generation requires that the private key be created in a protected en
 
 ### Wildcard
 
-A wildcard certificate is a digital certificate that secures a base domain and all of its first-level subdomains with a single certificate. The common name or subject-alternative name contains an asterisk followed by the domain (for example, *.example.com). The certificate is therefore valid for www.example.com, mail.example.com, api.example.com, and any other hostname that matches the pattern.
+A wildcard certificate is a digital certificate that secures a base domain and all of its first-level subdomains with a single certificate. The common name or subject-alternative name contains an asterisk followed by the domain (for example, `*.example.com`). The certificate is therefore valid for `www.example.com`, `mail.example.com`, `api.example.com`, and any other hostname that matches the pattern.
 
 Wildcard certificates simplify administration when an organization operates many subdomains under one domain. Only one certificate and private key need to be managed, renewed, and installed. The same private key, however, is shared across every covered subdomain; compromise of that key affects all of them.
 
-Most public certificate authorities issue wildcards only for a single level of subdomain. A certificate for *.example.com does not cover deeper names such as a.b.example.com or the apex domain example.com itself unless those names are explicitly included.
+Most public certificate authorities issue wildcards only for a single level of subdomain. A certificate for `*.example.com` does not cover deeper names such as `a.b.example.com` or the apex domain `example.com` itself unless those names are explicitly included.
 
 Organizations weigh convenience against risk. Wildcard certificates reduce operational overhead yet expand the blast radius of a private-key compromise and may complicate least-privilege key management. When subdomains have different security requirements or are managed by separate teams, individual certificates often provide better isolation than a single wildcard.
 
