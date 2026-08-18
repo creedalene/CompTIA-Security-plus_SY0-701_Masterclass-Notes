@@ -206,6 +206,14 @@ Because the enclave’s security rests on hardware isolation rather than operati
 
 ### Steganography
 
+Steganography hides the existence of a message or file inside another, seemingly innocuous carrier so that observers do not realize secret communication is occurring. Unlike encryption, which makes content unreadable but visible as ciphertext, steganography conceals the fact that hidden data is present at all.
+
+Common carrier files include images, audio, video, and documents. Techniques embed the secret payload in unused or least-significant portions of the carrier—for example, altering the least-significant bits of image pixels or inserting data into audio samples below the threshold of human perception. The modified carrier appears normal when opened with ordinary software.
+
+Detection relies on statistical analysis, visual or auditory anomalies, or specialized steganalysis tools that look for patterns inconsistent with unmodified files. Because the payload is often small relative to the carrier, steganography alone provides limited bandwidth and is frequently combined with encryption: the secret data is encrypted first, then embedded.
+
+Organizations encounter steganography both as a defensive obfuscation method and as an adversarial technique for covert data exfiltration or command-and-control channels. Security monitoring therefore includes inspection of media files and network transfers for signs of hidden content when threat models include covert channels.
+
 ### Tokenization
 
 ### Data masking
