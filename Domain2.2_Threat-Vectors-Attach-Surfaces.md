@@ -1,4 +1,4 @@
-# C###mpTIA Security+ (SY0-701) Domain 2.2 Explain common threat vectors and attack surfaces.
+# CompTIA Security+ (SY0-701) Domain 2.2 Explain common threat vectors and attack surfaces.
 
 ## Message-based
 
