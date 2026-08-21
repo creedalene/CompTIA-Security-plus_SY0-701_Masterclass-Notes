@@ -1,5 +1,7 @@
 # CompTIA Security+ (SY0-701) Domain 2.3 Explain various types of vulnerabilities.
 
+CompTIA Security+ objective 2.3 groups vulnerabilities by the layer they attack—application memory and timing, operating-system kernels, web input handling, hardware firmware, virtualization isolation, public-cloud exposure, supply-chain trust, cryptographic implementation, administrative configuration, mobile-device controls, and previously unknown zero-day flaws. Each category converts a different assumption of correctness into an exploitable weakness: memory layout, concurrent execution, update authenticity, isolation boundaries, vendor support timelines, or the simple belief that settings remain secure by default.
+
 ## Application
 
 Applications create their own attack surface through flaws in memory handling, concurrent execution, and trusted code delivery.
@@ -238,16 +240,58 @@ Because every packet in an organization ultimately traverses these devices, a si
 
 ### Software provider
 
+Organizations install and automatically update software obtained from external vendors under the assumption that digitally signed packages are trustworthy. When an attacker compromises the vendor’s own development or build environment, that trust becomes the delivery mechanism for malware.
+
+In 2020 attackers infiltrated SolarWinds’ build systems and inserted malicious code into the Orion network-management platform. The altered packages were digitally signed by SolarWinds and pushed through the normal automatic-update channel to approximately 18 000 customers, including major government agencies and technology firms. Because the updates arrived through a trusted vendor channel and carried valid signatures, security tools and administrators accepted them without suspicion. The compromise remained undetected for months, granting the attackers persistent access across highly sensitive networks.
+
+Any software provider whose build pipeline can be altered therefore converts a single upstream breach into a simultaneous, large-scale compromise of every downstream customer. Continuous verification of vendor security practices, independent code review where feasible, and monitoring for anomalous post-update behavior remain the primary controls against this class of supply-chain attack.
+
 ## Cryptographic
+
+Cryptographic vulnerabilities arise when encryption algorithms, key-management practices, or random-number generation fall short of current security standards. Weak algorithms such as outdated block ciphers or short-key asymmetric schemes allow attackers to recover plaintext through feasible computation. Improper key storage or overly long key lifetimes expose the keys themselves, collapsing the entire protection model. Insufficient entropy in random-number generators produces predictable session keys that an adversary can guess or reconstruct.
+
+These flaws convert otherwise strong mathematics into practical attack surfaces. An organization that continues to rely on deprecated algorithms, stores private keys in clear text, or reuses the same key across many sessions hands the attacker a direct path to decrypt data, forge signatures, or impersonate trusted parties. Continuous algorithm agility, hardware-backed key protection, and cryptographically secure random-number sources remain the only reliable countermeasures.
 
 ## Misconfiguration
 
+Misconfigurations are security weaknesses that administrators introduce themselves through incorrect or incomplete settings. Open cloud storage buckets, default credentials, unencrypted protocols, and overly permissive firewall rules all create attack surfaces that require no software flaw to exploit.
+
+An Amazon S3 bucket left without access controls publicly exposed 14 million Verizon records in 2017. Default usernames and passwords on IoT devices allow botnets such as Mirai to compromise cameras, routers, and sensors automatically. Clear-text protocols (Telnet, FTP, HTTP, IMAP) transmit credentials and data in readable form; a simple packet capture reveals everything. Superuser accounts left enabled with weak passwords give attackers an immediate privileged foothold. Excessive open ports on firewalls grant unintended external reachability.
+
+Because these conditions result from human oversight rather than vendor defects, continuous configuration audits, enforced secure baselines, and automated scanning for default credentials remain the primary defenses.
+
 ## Mobile device
+
+Mobile devices introduce two primary configuration-driven vulnerabilities that bypass manufacturer and organizational controls.
+
+Side loading installs applications from sources outside the official app store. Packages obtained from websites, email, or third-party repositories never receive the store’s malware scanning or code-integrity checks. Once installed, these applications run with full device permissions and can access stored credentials, personal data, and other apps.
+
+Jailbreaking (or its Android counterpart, rooting) replaces the official firmware with a modified version that removes the operating system’s security restrictions. The device loses App Store sandboxing, mandatory code signing, and Mobile Device Management (MDM) enforcement. Attackers who later compromise the device inherit unrestricted root access to every file and credential.
+
+Both practices defeat the isolation and policy controls that organizations rely on. MDM platforms therefore detect modified firmware or unauthorized installations and respond by quarantining the device or wiping corporate data.
 
 ### Side loading
 
+Side loading installs applications on a mobile device from sources other than the official manufacturer app store. Users obtain APK files or equivalent packages from websites, email attachments, or third-party repositories and install them directly.
+
+Because the package never passes through the store’s security review, the device receives no vendor verification of code integrity or malware scanning. Malicious applications therefore reach the device with full permissions and can access stored data, credentials, or other installed apps. Organizations that enforce Mobile Device Management (MDM) policies normally block side loading; any device that bypasses those controls immediately loses that protection.
+
 ### Jailbreaking
+
+Jailbreaking replaces the official firmware on an iOS device with a modified version that removes the manufacturer’s security restrictions. The process grants the user unrestricted root-level access to the operating system.
+
+Once jailbroken, the device no longer enforces the App Store sandbox, code-signing requirements, or Mobile Device Management (MDM) policies. Users can install unsigned applications from any source, alter system files, and disable built-in security controls. Attackers who compromise a jailbroken device inherit the same elevated privileges and can access every stored credential, application, and data store without the normal isolation barriers.
+
+Organizations therefore treat jailbreaking as a policy violation; MDM platforms detect the modified firmware and either quarantine the device or wipe corporate data.
 
 ## Zero-day
 
+A zero-day vulnerability is a security flaw that remains unknown to the software vendor and therefore has no available patch. Attackers who discover the flaw first can exploit it while defenders still lack any mitigation.
+
+Because the vendor has never seen the weakness, signature-based defenses and existing patches provide no protection. The window stays open until researchers or the vendor identify the issue, develop a fix, and distribute it. During that interval the attacker retains unrestricted access to every unpatched system that contains the flaw.
+
+Organizations monitor sources such as the Common Vulnerabilities and Exposures (CVE) database and apply emergency patches the moment they appear. Until then, compensating controls—network segmentation, application allow-listing, and heightened monitoring—limit the blast radius of an exploit that no one yet knows how to stop.
+
 ## Conclusion
+
+These vulnerabilities share a single operational reality: attackers need only one unexamined trust boundary to gain foothold, escalate privileges, or move laterally. Continuous inventory, timely patching, strict configuration baselines, vendor scrutiny, and layered compensating controls close the gaps before residual exposure becomes permanent compromise.
